@@ -70,7 +70,7 @@ export default function Dice({ onRoll, disabled, color }: DiceProps) {
         style={{ backgroundColor: color }}
       >
         <motion.div
-          animate={rolling ? { rotate: [0, 90, 180, 270, 360], scale: [1, 1.2, 1] } : {}}
+          animate={rolling ? { rotate: [0, 90, 180, 270, 360], scale: [1, 1.2, 1] } : { rotate: 0, scale: 1 }}
           transition={{ duration: 0.5, repeat: rolling ? Infinity : 0 }}
           className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl flex flex-col items-center justify-center p-1 border-2 border-gray-200 relative"
         >
