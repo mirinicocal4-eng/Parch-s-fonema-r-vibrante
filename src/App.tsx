@@ -319,6 +319,26 @@ export default function App() {
                     Elige el <b>Tablero Rápido</b> para una partida corta o el <b>Tablero Completo</b> para jugar como en el Parchís de siempre.
                   </p>
                 </section>
+
+                <hr className="border-gray-100" />
+
+                <section className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Información Técnica</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Este proyecto puede ser editado en:
+                  </p>
+                  <a 
+                    href="https://ai.studio/build" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sky-600 font-bold hover:underline block mb-4"
+                  >
+                    Google AI Studio Build 🚀
+                  </a>
+                  <p className="text-xs text-gray-400 font-mono">
+                    Para local: npm install && npm run dev
+                  </p>
+                </section>
               </div>
 
               <button
