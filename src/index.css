@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-sky-50 min-h-screen overflow-x-hidden;
+  font-family: var(--font-sans);
+}
+
+.child-button {
+  @apply px-8 py-4 rounded-3xl font-black text-2xl transition-all transform active:scale-95 shadow-lg border-b-8;
+}
+
+.btn-primary {
+  @apply bg-yellow-400 text-yellow-900 border-yellow-600 hover:bg-yellow-300;
+}
+
+.btn-secondary {
+  @apply bg-pink-500 text-white border-pink-700 hover:bg-pink-400;
+}
+
+.btn-green {
+  @apply bg-green-500 text-white border-green-700 hover:bg-green-400;
+}
