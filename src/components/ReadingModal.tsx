@@ -6,10 +6,10 @@ interface ReadingModalProps {
   isOpen: boolean;
   phrase: string;
   onClose: () => void;
-  playerColor: string;
+  playerColor?: string;
 }
 
-export default function ReadingModal({ isOpen, phrase, onClose, playerColor }: ReadingModalProps) {
+export default function ReadingModal({ isOpen, phrase, onClose, playerColor = '#4CAF50' }: ReadingModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (

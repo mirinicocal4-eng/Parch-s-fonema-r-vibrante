@@ -47,7 +47,7 @@ export default function Dice({ onRoll, disabled, color }: DiceProps) {
       dots.push(
         <div key={i} className="flex items-center justify-center w-full h-full">
           {positions[val].includes(i) && (
-            <div className="w-3 h-3 md:w-4 md:h-4 bg-gray-800 rounded-full shadow-inner" />
+            <div className="w-2.5 h-2.5 md:w-3 md:h-3 bg-gray-800 rounded-full shadow-inner" />
           )}
         </div>
       );
@@ -72,9 +72,16 @@ export default function Dice({ onRoll, disabled, color }: DiceProps) {
         <motion.div
           animate={rolling ? { rotate: [0, 90, 180, 270, 360], scale: [1, 1.2, 1] } : {}}
           transition={{ duration: 0.5, repeat: rolling ? Infinity : 0 }}
-          className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl grid grid-cols-3 p-2 border-2 border-gray-200"
+          className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl flex flex-col items-center justify-center p-1 border-2 border-gray-200 relative"
         >
-          {renderDots(value)}
+          <div className="grid grid-cols-3 w-full h-full opacity-40">
+            {renderDots(value)}
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl md:text-4xl font-black text-gray-800 drop-shadow-sm">
+              {value}
+            </span>
+          </div>
         </motion.div>
       </motion.button>
       <p className="text-xl font-black text-gray-700 uppercase tracking-tighter">

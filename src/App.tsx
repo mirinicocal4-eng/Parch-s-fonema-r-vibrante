@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, RotateCcw, Play, Zap, Users } from 'lucide-react';
+import { Trophy, RotateCcw, Play, Zap, Users, Info, X } from 'lucide-react';
 import { GameMode, Player, Square } from './types';
 import { FRASES_RR, TRABALENGUAS_RR } from './data/frases';
 import Board from './components/Board';
@@ -20,6 +20,7 @@ export default function App() {
   const [currentPhrase, setCurrentPhrase] = useState('');
   const [availableTexts, setAvailableTexts] = useState<string[]>([]);
   const [winner, setWinner] = useState<Player | null>(null);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const initGame = (selectedMode: GameMode) => {
     const numSquares = selectedMode === 'RAPIDO' ? 24 : 68;
@@ -53,23 +54,29 @@ export default function App() {
     setAvailableTexts([...FRASES_RR, ...TRABALENGUAS_RR]);
   };
 
-  const handleRoll = (value: number) => {
+  const handleRoll = async (value: number) => {
     const player = players[currentPlayerIndex];
-    let newPosition = player.position;
+    let currentPos = player.position;
+    const targetPos = player.position === -1 ? 0 : Math.min(player.position + value, squares.length - 1);
 
-    if (player.position === -1) {
-      newPosition = 0;
-    } else {
-      newPosition += value;
+    // Step-by-step movement animation
+    if (currentPos === -1) {
+      // Exit home
+      const updatedPlayers = [...players];
+      updatedPlayers[currentPlayerIndex] = { ...player, position: 0 };
+      setPlayers(updatedPlayers);
+      currentPos = 0;
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
 
-    if (newPosition >= squares.length - 1) {
-      newPosition = squares.length - 1;
+    while (currentPos < targetPos) {
+      currentPos++;
+      const updatedPlayers = [...players];
+      updatedPlayers[currentPlayerIndex] = { ...player, position: currentPos };
+      setPlayers(updatedPlayers);
+      // Wait for animation
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
-
-    const updatedPlayers = [...players];
-    updatedPlayers[currentPlayerIndex] = { ...player, position: newPosition };
-    setPlayers(updatedPlayers);
 
     // Get a non-repeating random text
     let pool = availableTexts.length > 0 ? [...availableTexts] : [...FRASES_RR, ...TRABALENGUAS_RR];
@@ -83,8 +90,8 @@ export default function App() {
     setCurrentPhrase(randomText);
     setIsModalOpen(true);
 
-    if (newPosition === squares.length - 1) {
-      setWinner(updatedPlayers[currentPlayerIndex]);
+    if (currentPos === squares.length - 1) {
+      setWinner({ ...player, position: currentPos });
     }
   };
 
@@ -107,8 +114,14 @@ export default function App() {
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-8 relative"
         >
+          <button 
+            onClick={() => setShowInstructions(true)}
+            className="absolute -top-12 -right-4 p-3 bg-white rounded-full shadow-lg text-sky-500 hover:scale-110 transition-transform"
+          >
+            <Info size={32} />
+          </button>
           <h1 className="text-6xl md:text-8xl font-black text-orange-600 mb-4 drop-shadow-xl tracking-tighter">
             PARCHÍS <span className="text-blue-600">RR</span>
           </h1>
@@ -167,12 +180,20 @@ export default function App() {
     <div className="min-h-screen flex flex-col p-4 md:p-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <button
-          onClick={resetGame}
-          className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
-        >
-          <RotateCcw size={24} className="text-gray-600" />
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={resetGame}
+            className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+          >
+            <RotateCcw size={24} className="text-gray-600" />
+          </button>
+          <button
+            onClick={() => setShowInstructions(true)}
+            className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+          >
+            <Info size={24} className="text-sky-500" />
+          </button>
+        </div>
 
         <div className="flex flex-wrap gap-2 justify-center">
           {players.map((p, idx) => (
@@ -200,12 +221,12 @@ export default function App() {
       <div className="flex-1 flex flex-col items-center justify-center gap-8">
         <Board mode={mode} players={players} squares={squares} />
         
-        {!winner && (
+        {!winner && players.length > 0 && (
           <div className="mt-4">
             <Dice
               onRoll={handleRoll}
               disabled={isModalOpen}
-              color={players[currentPlayerIndex].color}
+              color={players[currentPlayerIndex]?.color || '#ccc'}
             />
           </div>
         )}
@@ -248,6 +269,68 @@ export default function App() {
         onClose={closeModal}
         playerColor={players[currentPlayerIndex]?.color}
       />
+
+      {/* Instructions Modal */}
+      <AnimatePresence>
+        {showInstructions && (
+          <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto relative p-8"
+            >
+              <button 
+                onClick={() => setShowInstructions(false)}
+                className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600"
+              >
+                <X size={32} />
+              </button>
+
+              <h2 className="text-4xl font-black text-sky-600 mb-6 uppercase tracking-tight">¿Cómo jugar?</h2>
+              
+              <div className="space-y-6 text-gray-700">
+                <section>
+                  <h3 className="text-xl font-bold text-orange-500 flex items-center gap-2 mb-2">
+                    <Trophy size={20} /> OBJETIVO
+                  </h3>
+                  <p className="text-lg leading-relaxed">
+                    Lleva tu ficha a la meta (🏆) leyendo frases con la <b>"rr"</b>. ¡El primero en llegar gana!
+                  </p>
+                </section>
+
+                <section>
+                  <h3 className="text-xl font-bold text-sky-500 flex items-center gap-2 mb-2">
+                    <Play size={20} /> EL TURNO
+                  </h3>
+                  <ul className="list-disc list-inside space-y-2 text-lg">
+                    <li>Toca el dado para moverte.</li>
+                    <li>Tu ficha saltará de casilla en casilla.</li>
+                    <li>Al final, aparecerá una frase para leer.</li>
+                    <li>¡Lee en voz alta y pulsa <b>"¡LO LEÍ!"</b> para terminar!</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h3 className="text-xl font-bold text-green-500 flex items-center gap-2 mb-2">
+                    <Zap size={20} /> MODOS
+                  </h3>
+                  <p className="text-lg">
+                    Elige el <b>Tablero Rápido</b> para una partida corta o el <b>Tablero Completo</b> para jugar como en el Parchís de siempre.
+                  </p>
+                </section>
+              </div>
+
+              <button
+                onClick={() => setShowInstructions(false)}
+                className="w-full mt-8 py-4 bg-sky-500 text-white text-2xl font-black rounded-2xl shadow-lg hover:bg-sky-600 transition-colors"
+              >
+                ¡ENTENDIDO!
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

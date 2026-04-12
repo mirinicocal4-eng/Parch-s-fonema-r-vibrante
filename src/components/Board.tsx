@@ -133,7 +133,13 @@ export default function Board({ mode, players, squares }: BoardProps) {
       </div>
 
       {/* Path Squares */}
-      <div className="grid grid-cols-19 grid-rows-19 w-full h-full">
+      <div 
+        className="grid w-full h-full"
+        style={{ 
+          gridTemplateColumns: 'repeat(19, minmax(0, 1fr))',
+          gridTemplateRows: 'repeat(19, minmax(0, 1fr))'
+        }}
+      >
         {TRADITIONAL_COORDS.map((coord, index) => {
           const square = squares[index];
           if (!square) return null;
