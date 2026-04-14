@@ -9,6 +9,7 @@ import ReadingModal from './components/ReadingModal';
 
 const COLORS = ['#FF5252', '#4CAF50', '#2196F3', '#FFEB3B'];
 const PLAYER_NAMES = ['Rojo', 'Verde', 'Azul', 'Amarillo'];
+const START_SQUARES = [4, 21, 55, 38]; // Red, Green, Blue, Yellow starting positions
 
 export default function App() {
   const [mode, setMode] = useState<GameMode | null>(null);
@@ -30,7 +31,7 @@ export default function App() {
       else if (selectedMode === 'COMPLETO') {
         const safeIndices = [4, 11, 16, 21, 28, 33, 38, 45, 50, 55, 62];
         if (safeIndices.includes(i)) type = 'SEGURO';
-        if (i === 0) type = 'SALIDA';
+        if (START_SQUARES.includes(i)) type = 'SALIDA';
       }
       return { id: i, type };
     });
@@ -40,6 +41,7 @@ export default function App() {
       name: `Jugador ${PLAYER_NAMES[i]}`,
       color: COLORS[i],
       position: -1, // Start in home
+      startPos: selectedMode === 'COMPLETO' ? START_SQUARES[i] : 0,
       isWinner: false,
       homeIndex: i
     }));
@@ -134,7 +136,7 @@ export default function App() {
             <Users size={24} /> ¿CUÁNTOS JUGADORES?
           </p>
           <div className="flex gap-4 justify-center">
-            {[2, 3, 4].map((n) => (
+            {[1, 2, 3, 4].map((n) => (
               <button
                 key={n}
                 onClick={() => setNumPlayers(n)}

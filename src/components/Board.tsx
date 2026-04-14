@@ -130,6 +130,19 @@ export default function Board({ mode, players, squares }: BoardProps) {
       {/* Center Goal */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[16%] h-[16%] bg-white border-4 border-gray-200 rounded-full z-20 flex items-center justify-center shadow-lg">
         <div className="text-4xl">🏆</div>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {players.filter(p => p.position === squares.length - 1).map((p, i) => (
+            <motion.div
+              key={p.id}
+              layoutId={`player-${p.id}`}
+              className="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-white shadow-md absolute"
+              style={{ 
+                backgroundColor: p.color,
+                transform: `translate(${(i - 1) * 10}px, ${(i - 1) * 10}px)`
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Path Squares */}
@@ -144,7 +157,7 @@ export default function Board({ mode, players, squares }: BoardProps) {
           const square = squares[index];
           if (!square) return null;
 
-          const isSafe = square.type === 'SEGURO';
+          const isSafe = square.type === 'SEGURO' || square.type === 'SALIDA';
           const isStart = square.type === 'SALIDA';
           
           return (
@@ -157,14 +170,18 @@ export default function Board({ mode, players, squares }: BoardProps) {
               className={`
                 border border-gray-200 flex items-center justify-center relative
                 ${isSafe ? 'bg-blue-50' : 'bg-white'}
-                ${isStart ? 'bg-gray-50' : ''}
+                ${isStart ? 'border-gray-400 border-2' : ''}
               `}
             >
               <span className="text-[8px] text-gray-300 absolute top-0.5 left-0.5">{index + 1}</span>
               {isSafe && <div className="w-1.5 h-1.5 rounded-full bg-blue-300 opacity-50" />}
               
               <div className="flex flex-wrap gap-0.5 justify-center z-10">
-                {players.filter(p => p.position === index).map(p => (
+                {players.filter(p => {
+                  if (p.position === -1 || p.position === squares.length - 1) return false;
+                  const visualPos = (p.startPos + p.position) % 68;
+                  return visualPos === index;
+                }).map(p => (
                   <motion.div
                     key={p.id}
                     layoutId={`player-${p.id}`}
