@@ -13,7 +13,7 @@ export const FRASES_RR = [
   "La porra de madera es del abuelo.",
   "El cerro verde es una montaña alta.",
   "La sierra corta la madera del pino.",
-  "La proa del barco es de color azul.",
+  
   "La perra corre rápido tras la pelota.",
   "El jarro tiene mucha agua muy fría.",
   "La torre de piedra es muy antigua.",
