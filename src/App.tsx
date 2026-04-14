@@ -220,16 +220,21 @@ export default function App() {
       </div>
 
       {/* Main Game Area */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-8">
-        <Board mode={mode} players={players} squares={squares} />
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
+        <div className="w-full max-w-[90vh] flex justify-center">
+          <Board mode={mode} players={players} squares={squares} />
+        </div>
         
         {!winner && players.length > 0 && (
-          <div className="mt-4">
+          <div className="flex flex-col items-center justify-center bg-white/50 p-6 rounded-3xl backdrop-blur-sm border-2 border-white/50 shadow-xl">
             <Dice
               onRoll={handleRoll}
               disabled={isModalOpen}
               color={players[currentPlayerIndex]?.color || '#ccc'}
             />
+            <p className="mt-4 text-gray-500 font-black text-center uppercase tracking-tighter">
+              TOCA PARA TIRAR
+            </p>
           </div>
         )}
       </div>
