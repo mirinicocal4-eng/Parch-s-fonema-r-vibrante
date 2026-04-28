@@ -89,8 +89,11 @@ export const FRASES_RR = [
 ];
 
 export const TRABALENGUAS_RR = [
-  "Erre con erre guitarra, erre con erre carril, rápido corren los carros, rápido el ferrocarril.",
+  "Erre con erre guitarra, erre con erre barril, rápido corren los carros, rápido el ferrocarril.",
   "El perro de San Roque no tiene rabo porque Ramón Ramírez se lo ha cortado.",
+  "El perrito:  Por la calle de Carretas pasaba un perrito; pasó una carreta y le pisó un rabito. ¡Pobre perrito, como lloraba por su rabito.",
+  "Corre que te corre, corre sin parar. Corre, corre, corre que si tú no corres ¡seguro te atraparán! Corre, corre y corre que si no el perrito aullara, y el ratón borracho se quedara, corre, corre y corre.",
+   "Un ratón robó un ramo de rosas rojas. El rabo se enredó y rodó de rosa en rosa.",
   "Parra tenía una perra. Guerra tenía una parra. La perra de Parra subió a la parra de Guerra.",
   "Un burro comía berros y el perro se los quitó, el burro lanzó un rebuzno y el perro al barro cayó.",
   "Rosa Rizo reza ruso, ruso reza Rosa Rizo.",
