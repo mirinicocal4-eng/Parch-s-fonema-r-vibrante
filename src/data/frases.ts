@@ -51,7 +51,7 @@ export const FRASES_RR = [
   "La gorra de lana abriga mucho hoy.",
   "El arroz con pollo está muy sabroso.",
   "La tierra del campo tiene muchas lombrices.",
-  "El fierro de la puerta está pintado.",
+  "El hierro de la puerta está pintado.",
   "La parra de uvas crece muy alto.",
   "El tarro de galletas está muy lleno.",
   "La porra del tambor suena muy fuerte.",
@@ -77,14 +77,14 @@ export const FRASES_RR = [
   "El perro guardián vigila toda la casa.",
   "La gorra de rayas es muy divertida.",
   "El arroz amarillo tiene mucho azafrán .",
-  "La sierra de mano corta el tablón.",
+  "Mi padre corta el tablón con la sierra de mano.",
   "El tarro de mermelada es de fresa.",
   "La parra tiene hojas verdes muy grandes.",
   "El hierro de la herradura está ardiendo.",
   "La porra de goma es muy flexible.",
   "El zorro rojo salta sobre el tronco.",
   "La perra muerde su juguete de goma.",
-  "El jarro de barro mantiene el agua.",
+  "La jarra  de barro mantiene el agua fría.",
   "La carrera de relevos es por equipos."
 ];
 
