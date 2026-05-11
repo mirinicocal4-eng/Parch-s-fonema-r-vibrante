@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, RotateCcw, Play, Zap, Users, Info, X } from 'lucide-react';
-import { GameMode, Player, Square } from './types';
-import { FRASES_RR, TRABALENGUAS_RR } from './data/frases';
+import { GameMode, Player, Square, Phoneme, ReadingItem, ContentLevel } from './types';
+import { FRASES_RR, TRABALENGUAS_RR, WORDS_RR } from './data/phonemes/rr';
+import { FRASES_S, TRABALENGUAS_S, WORDS_S } from './data/phonemes/s';
+import { WORDS_Z, TRABALENGUAS_Z } from './data/phonemes/z';
 import Board from './components/Board';
 import Dice from './components/Dice';
 import ReadingModal from './components/ReadingModal';
@@ -12,14 +14,16 @@ const PLAYER_NAMES = ['Rojo', 'Verde', 'Azul', 'Amarillo'];
 const START_SQUARES = [4, 21, 55, 38]; // Red, Green, Blue, Yellow starting positions
 
 export default function App() {
+  const [phoneme, setPhoneme] = useState<Phoneme | null>(null);
+  const [level, setLevel] = useState<ContentLevel | null>(null);
   const [mode, setMode] = useState<GameMode | null>(null);
   const [numPlayers, setNumPlayers] = useState(2);
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [squares, setSquares] = useState<Square[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPhrase, setCurrentPhrase] = useState('');
-  const [availableTexts, setAvailableTexts] = useState<string[]>([]);
+  const [currentItem, setCurrentItem] = useState<ReadingItem | null>(null);
+  const [availableTexts, setAvailableTexts] = useState<ReadingItem[]>([]);
   const [winner, setWinner] = useState<Player | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
 
@@ -52,8 +56,22 @@ export default function App() {
     setCurrentPlayerIndex(0);
     setWinner(null);
     
-    // Initialize available texts pool
-    setAvailableTexts([...FRASES_RR, ...TRABALENGUAS_RR]);
+    // Initialize available texts pool based on selected phoneme and level
+    let pool: ReadingItem[] = [];
+    
+    if (phoneme === 'RR') {
+      if (level === 'PALABRAS') pool = WORDS_RR;
+      else if (level === 'LECTURA') pool = [...FRASES_RR, ...TRABALENGUAS_RR];
+      else pool = [...WORDS_RR, ...FRASES_RR, ...TRABALENGUAS_RR];
+    } else if (phoneme === 'S') {
+      if (level === 'PALABRAS') pool = WORDS_S;
+      else if (level === 'LECTURA') pool = [...FRASES_S, ...TRABALENGUAS_S];
+      else pool = [...WORDS_S, ...FRASES_S, ...TRABALENGUAS_S];
+    } else if (phoneme === 'Z') {
+      pool = WORDS_Z;
+    }
+    
+    setAvailableTexts(pool);
   };
 
   const handleRoll = async (value: number) => {
@@ -81,15 +99,30 @@ export default function App() {
     }
 
     // Get a non-repeating random text
-    let pool = availableTexts.length > 0 ? [...availableTexts] : [...FRASES_RR, ...TRABALENGUAS_RR];
+    let pool = availableTexts.length > 0 ? [...availableTexts] : [];
+    
+    if (pool.length === 0) {
+      if (phoneme === 'RR') {
+        if (level === 'PALABRAS') pool = WORDS_RR;
+        else if (level === 'LECTURA') pool = [...FRASES_RR, ...TRABALENGUAS_RR];
+        else pool = [...WORDS_RR, ...FRASES_RR, ...TRABALENGUAS_RR];
+      } else if (phoneme === 'S') {
+        if (level === 'PALABRAS') pool = WORDS_S;
+        else if (level === 'LECTURA') pool = [...FRASES_S, ...TRABALENGUAS_S];
+        else pool = [...WORDS_S, ...FRASES_S, ...TRABALENGUAS_S];
+      } else if (phoneme === 'Z') {
+        pool = WORDS_Z;
+      }
+    }
+
     const randomIndex = Math.floor(Math.random() * pool.length);
-    const randomText = pool[randomIndex];
+    const selectedItem = pool[randomIndex];
     
     // Remove used text from pool
     pool.splice(randomIndex, 1);
     setAvailableTexts(pool);
     
-    setCurrentPhrase(randomText);
+    setCurrentItem(selectedItem);
     setIsModalOpen(true);
 
     if (currentPos === squares.length - 1) {
@@ -105,10 +138,127 @@ export default function App() {
   };
 
   const resetGame = () => {
+    setPhoneme(null);
+    setLevel(null);
     setMode(null);
     setPlayers([]);
     setWinner(null);
   };
+
+  if (!phoneme) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-12"
+        >
+          <h1 className="text-6xl md:text-8xl font-black text-gray-800 mb-4 drop-shadow-xl tracking-tighter">
+            PARCHÍS <span className="text-sky-500">FONEMAS</span>
+          </h1>
+          <p className="text-2xl text-gray-600 font-bold uppercase tracking-widest">Elige el sonido para jugar</p>
+        </motion.div>
+
+        <div className="flex flex-col md:flex-row gap-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setPhoneme('RR')}
+            className="w-64 h-64 bg-orange-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-orange-600 border-8 border-white"
+          >
+            <span className="text-8xl font-black">RR</span>
+            <span className="text-xl font-bold uppercase tracking-widest">R vibrante</span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setPhoneme('S')}
+            className="w-48 h-48 md:w-64 md:h-64 bg-sky-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-sky-600 border-8 border-white"
+          >
+            <span className="text-8xl font-black">S</span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setPhoneme('Z');
+              setLevel('PALABRAS');
+            }}
+            className="w-48 h-48 md:w-64 md:h-64 bg-emerald-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-emerald-600 border-8 border-white"
+          >
+            <span className="text-8xl font-black">Z</span>
+          </motion.button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!level) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-12"
+        >
+          <h1 className="text-6xl md:text-8xl font-black text-gray-800 mb-4 drop-shadow-xl tracking-tighter uppercase">
+            FONEMA <span className="text-sky-500">{phoneme}</span>
+          </h1>
+          <p className="text-2xl text-gray-600 font-bold uppercase tracking-widest">¿Qué nivel quieres practicar?</p>
+        </motion.div>
+
+        <div className="flex flex-wrap gap-8 justify-center max-w-5xl">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setLevel('PALABRAS')}
+            className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-emerald-500"
+          >
+            <span className="text-8xl">🖼️</span>
+            <div className="text-center">
+              <span className="block text-2xl font-black uppercase tracking-widest text-emerald-600">Palabras</span>
+              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Nivel Inicial</span>
+            </div>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setLevel('LECTURA')}
+            className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-sky-500"
+          >
+            <span className="text-8xl">📝</span>
+            <div className="text-center">
+              <span className="block text-2xl font-black uppercase tracking-widest text-sky-600">Lectura</span>
+              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Frases y Trabalenguas</span>
+            </div>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setLevel('TODO')}
+            className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-purple-500"
+          >
+            <span className="text-8xl">🎲</span>
+            <div className="text-center">
+              <span className="block text-2xl font-black uppercase tracking-widest text-purple-600">Mezclado</span>
+              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Todo el contenido</span>
+            </div>
+          </motion.button>
+        </div>
+
+        <button 
+          onClick={() => setPhoneme(null)}
+          className="mt-12 text-gray-400 font-bold hover:text-gray-600 underline"
+        >
+          VOLVER A ELEGIR FONEMA
+        </button>
+      </div>
+    );
+  }
 
   if (!mode) {
     return (
@@ -124,8 +274,8 @@ export default function App() {
           >
             <Info size={32} />
           </button>
-          <h1 className="text-6xl md:text-8xl font-black text-orange-600 mb-4 drop-shadow-xl tracking-tighter">
-            PARCHÍS <span className="text-blue-600">RR</span>
+          <h1 className="text-6xl md:text-8xl font-black text-orange-600 mb-4 drop-shadow-xl tracking-tighter uppercase">
+            PARCHÍS <span className={phoneme === 'RR' ? 'text-blue-600' : 'text-sky-600'}>{phoneme}</span>
           </h1>
           <p className="text-2xl text-gray-600 font-bold uppercase tracking-widest">¡A leer y destrabar la lengua!</p>
         </motion.div>
@@ -174,6 +324,13 @@ export default function App() {
             TABLERO COMPLETO
           </motion.button>
         </div>
+        
+        <button 
+          onClick={() => setPhoneme(null)}
+          className="mt-12 text-gray-400 font-bold hover:text-gray-600 underline"
+        >
+          VOLVER A ELEGIR FONEMA
+        </button>
       </div>
     );
   }
@@ -272,7 +429,7 @@ export default function App() {
 
       <ReadingModal
         isOpen={isModalOpen}
-        phrase={currentPhrase}
+        item={currentItem}
         onClose={closeModal}
         playerColor={players[currentPlayerIndex]?.color}
       />
@@ -302,7 +459,7 @@ export default function App() {
                     <Trophy size={20} /> OBJETIVO
                   </h3>
                   <p className="text-lg leading-relaxed">
-                    Lleva tu ficha a la meta (🏆) leyendo frases con la <b>"rr"</b>. ¡El primero en llegar gana!
+                    Lleva tu ficha a la meta (🏆) leyendo frases con la <b>"{phoneme}"</b>. ¡El primero en llegar gana!
                   </p>
                 </section>
 

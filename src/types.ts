@@ -1,4 +1,6 @@
 export type GameMode = 'RAPIDO' | 'COMPLETO';
+export type Phoneme = 'RR' | 'S' | 'Z';
+export type ContentLevel = 'PALABRAS' | 'LECTURA' | 'TODO';
 
 export interface Player {
   id: number;
@@ -14,4 +16,9 @@ export interface Square {
   id: number;
   type: 'NORMAL' | 'SEGURO' | 'META' | 'SALIDA';
   color?: string;
+}
+
+export interface ReadingItem {
+  text: string;
+  pictogramId?: number;
 }
