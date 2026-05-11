@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, RotateCcw, Play, Zap, Users, Info, X } from 'lucide-react';
+import { Trophy, RotateCcw, Play, Zap, Users, Info, X, Home, ArrowLeft } from 'lucide-react';
 import { GameMode, Player, Square, Phoneme, ReadingItem, ContentLevel } from './types';
 import { FRASES_RR, TRABALENGUAS_RR, WORDS_RR } from './data/phonemes/rr';
 import { FRASES_S, TRABALENGUAS_S, WORDS_S } from './data/phonemes/s';
@@ -163,7 +163,12 @@ export default function App() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setPhoneme('RR')}
+            onClick={() => {
+              setPhoneme('RR');
+              setLevel(null);
+              setMode(null);
+              setPlayers([]);
+            }}
             className="w-64 h-64 bg-orange-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-orange-600 border-8 border-white"
           >
             <span className="text-8xl font-black">RR</span>
@@ -173,7 +178,12 @@ export default function App() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setPhoneme('S')}
+            onClick={() => {
+              setPhoneme('S');
+              setLevel(null);
+              setMode(null);
+              setPlayers([]);
+            }}
             className="w-48 h-48 md:w-64 md:h-64 bg-sky-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-sky-600 border-8 border-white"
           >
             <span className="text-8xl font-black">S</span>
@@ -185,12 +195,25 @@ export default function App() {
             onClick={() => {
               setPhoneme('Z');
               setLevel('PALABRAS');
+              setMode(null);
+              setPlayers([]);
             }}
             className="w-48 h-48 md:w-64 md:h-64 bg-emerald-500 text-white rounded-[3rem] shadow-2xl flex flex-col items-center justify-center gap-4 transition-colors hover:bg-emerald-600 border-8 border-white"
           >
             <span className="text-8xl font-black">Z</span>
           </motion.button>
         </div>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setPhoneme(null)}
+          className="mt-12 px-10 py-4 bg-gray-200 text-gray-600 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-300 transition-all shadow-md"
+        >
+          ← Volver a elegir fonema
+        </motion.button>
       </div>
     );
   }
@@ -213,7 +236,11 @@ export default function App() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setLevel('PALABRAS')}
+            onClick={() => {
+              setLevel('PALABRAS');
+              setMode(null);
+              setPlayers([]);
+            }}
             className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-emerald-500"
           >
             <span className="text-8xl">🖼️</span>
@@ -226,7 +253,11 @@ export default function App() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setLevel('LECTURA')}
+            onClick={() => {
+              setLevel('LECTURA');
+              setMode(null);
+              setPlayers([]);
+            }}
             className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-sky-500"
           >
             <span className="text-8xl">📝</span>
@@ -239,7 +270,11 @@ export default function App() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setLevel('TODO')}
+            onClick={() => {
+              setLevel('TODO');
+              setMode(null);
+              setPlayers([]);
+            }}
             className="w-56 h-56 md:w-72 md:h-72 bg-white text-gray-800 rounded-[3rem] shadow-xl flex flex-col items-center justify-center gap-4 transition-all hover:shadow-2xl border-8 border-purple-500"
           >
             <span className="text-8xl">🎲</span>
@@ -266,14 +301,26 @@ export default function App() {
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8 relative"
+          className="mb-8 relative flex flex-col items-center"
         >
-          <button 
-            onClick={() => setShowInstructions(true)}
-            className="absolute -top-12 -right-4 p-3 bg-white rounded-full shadow-lg text-sky-500 hover:scale-110 transition-transform"
-          >
-            <Info size={32} />
-          </button>
+          <div className="absolute -top-16 left-1/2 -translate-x-1/2 flex gap-4">
+            <button 
+              onClick={() => setLevel(null)}
+              className="px-6 py-2 bg-white rounded-full shadow-md text-sky-600 font-bold hover:scale-105 transition-transform flex items-center gap-2 border-2 border-sky-100"
+            >
+              <ArrowLeft size={20} /> Cambiar Nivel
+            </button>
+            <button 
+              onClick={() => {
+                setPhoneme(null);
+                setLevel(null);
+              }}
+              className="px-6 py-2 bg-white rounded-full shadow-md text-gray-500 font-bold hover:scale-105 transition-transform flex items-center gap-2 border-2 border-gray-100"
+            >
+              <Home size={20} /> Inicio
+            </button>
+          </div>
+
           <h1 className="text-6xl md:text-8xl font-black text-orange-600 mb-4 drop-shadow-xl tracking-tighter uppercase">
             PARCHÍS <span className={phoneme === 'RR' ? 'text-blue-600' : 'text-sky-600'}>{phoneme}</span>
           </h1>
@@ -341,16 +388,36 @@ export default function App() {
       <div className="flex justify-between items-center mb-8">
         <div className="flex gap-2">
           <button
-            onClick={resetGame}
+            onClick={() => {
+              setPhoneme(null);
+              setLevel(null);
+              setMode(null);
+              setPlayers([]);
+              setWinner(null);
+            }}
             className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            title="Volver al inicio"
           >
-            <RotateCcw size={24} className="text-gray-600" />
+            <Home size={24} className="text-gray-600" />
           </button>
           <button
-            onClick={() => setShowInstructions(true)}
+            onClick={() => {
+              setLevel(null);
+              setMode(null);
+              setPlayers([]);
+              setWinner(null);
+            }}
             className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            title="Cambiar nivel / modo"
           >
-            <Info size={24} className="text-sky-500" />
+            <ArrowLeft size={24} className="text-sky-500" />
+          </button>
+          <button
+            onClick={resetGame}
+            className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+            title="Reiniciar partida"
+          >
+            <RotateCcw size={24} className="text-gray-600" />
           </button>
         </div>
 

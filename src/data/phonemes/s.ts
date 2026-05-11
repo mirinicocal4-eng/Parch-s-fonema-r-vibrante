@@ -36,7 +36,7 @@ export const WORDS_S: ReadingItem[] = [
   { text: "Vaso" },
   { text: "Queso" },
   { text: "Oso" },
-  { text: "Pescado" },
+  { text: "Pescado", pictogramId: 6646 },
   { text: "Isla" },
   { text: "Escalera" },
   { text: "Escoba" },
